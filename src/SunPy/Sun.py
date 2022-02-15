@@ -28,12 +28,12 @@ Solar flux, equation of time and import of python library
 
 """
 
-SUN_PY_VERSION = 1.5
-
 import math
 from math import pi
 
 import calendar
+
+SUN_PY_VERSION = 1.5
 
 
 class Sun:
@@ -208,19 +208,18 @@ class Sun:
         # the specified altitude altit:
 
         cost = (self.sind(altit) - self.sind(lat) * self.sind(sdec)) / \
-                   (self.cosd(lat) * self.cosd(sdec))
+               (self.cosd(lat) * self.cosd(sdec))
 
         if cost >= 1.0:
             rc = -1
-            t = 0.0           # Sun always below altit
+            t = 0.0  # Sun always below altit
 
         elif cost <= -1.0:
             rc = + 1
-            t = 12.0         # Sun always above altit
+            t = 12.0  # Sun always above altit
 
         else:
-            t = self.acosd(cost) / 15.0   # The diurnal arc, hours
-
+            t = self.acosd(cost) / 15.0  # The diurnal arc, hours
 
         # Store rise and set times - in hours UT
         return (tsouth - t, tsouth + t)
@@ -265,17 +264,16 @@ class Sun:
         if upper_limb:
             altit = altit - sradius
 
-
         cost = (self.sind(altit) - self.sind(lat) * sin_sdecl) / \
-                   (self.cosd(lat) * cos_sdecl)
+               (self.cosd(lat) * cos_sdecl)
         if cost >= 1.0:
-            t = 0.0             # Sun always below altit
+            t = 0.0  # Sun always below altit
 
         elif cost <= -1.0:
-            t = 24.0      # Sun always above altit
+            t = 24.0  # Sun always above altit
 
         else:
-            t = (2.0 / 15.0) * self.acosd(cost)     # The diurnal arc, hours
+            t = (2.0 / 15.0) * self.acosd(cost)  # The diurnal arc, hours
 
         return t
 
@@ -296,11 +294,11 @@ class Sun:
         E = M + e * self.RADEG * self.sind(M) * (1.0 + e * self.cosd(M))
         x = self.cosd(E) - e
         y = math.sqrt(1.0 - e * e) * self.sind(E)
-        r = math.sqrt(x * x + y * y)              #Solar distance
-        v = self.atan2d(y, x)                 # True anomaly
-        lon = v + w                        # True solar longitude
+        r = math.sqrt(x * x + y * y)  # Solar distance
+        v = self.atan2d(y, x)  # True anomaly
+        lon = v + w  # True solar longitude
         if lon >= 360.0:
-            lon = lon - 360.0   # Make it 0..360 degrees
+            lon = lon - 360.0  # Make it 0..360 degrees
 
         return (lon, r)
 
@@ -314,7 +312,7 @@ class Sun:
         # Compute Sun's ecliptical coordinates
         res = self.sunpos(d)
         lon = res[0]  # True solar longitude
-        r = res[1]    # Solar distance
+        r = res[1]  # Solar distance
 
         # Compute ecliptic rectangular coordinates (z=0)
         x = r * self.cosd(lon)
@@ -381,7 +379,7 @@ class Sun:
         # time, imposing no runtime or code overhead.
 
         sidtim0 = self.revolution((180.0 + 356.0470 + 282.9404) +
-                                     (0.9856002585 + 4.70935E-5) * d)
+                                  (0.9856002585 + 4.70935E-5) * d)
         return sidtim0
 
     def solar_altitude(self, latitude, year, month, day):
@@ -408,7 +406,7 @@ class Sun:
 
         # In the tropical and  in extreme latitude, values over 90 may occurs.
         if altitude > 90:
-            altitude = 90 - (altitude-90)
+            altitude = 90 - (altitude - 90)
 
         if altitude < 0:
             altitude = 0
@@ -457,7 +455,7 @@ class Sun:
         # Julian date
         nJulianDate = self.Julian(year, month, day)
         # Check if it is a leap year
-        if(calendar.isleap(year)):
+        if (calendar.isleap(year)):
             fDivide = 366.0
         else:
             fDivide = 365.0
@@ -471,8 +469,8 @@ class Sun:
         # in minutes
         fEot = 0.002733 - 7.343 * math.sin(fA) + 0.5519 * math.cos(fA) \
                - 9.47 * math.sin(2.0 * fA) - 3.02 * math.cos(2.0 * fA) \
-               - 0.3289 * math.sin(3.0 * fA) -0.07581 * math.cos(3.0 * fA) \
-               -0.1935 * math.sin(4.0 * fA) -0.1245 * math.cos(4.0 * fA)
+               - 0.3289 * math.sin(3.0 * fA) - 0.07581 * math.cos(3.0 * fA) \
+               - 0.1935 * math.sin(4.0 * fA) - 0.1245 * math.cos(4.0 * fA)
         # Express in fraction of hour
         fEot = fEot / 60.0
         # Express in radians
@@ -501,25 +499,24 @@ class Sun:
         """
 
         dVar = 1.0 / (1.0 - 9.464e-4 * math.sin(dAlf) - 0.01671 * math.cos(dAlf) - \
-                    + 1.489e-4 * math.cos(2.0 * dAlf) - 2.917e-5 * math.sin(3.0 * dAlf) - \
-                    + 3.438e-4 * math.cos(4.0 * dAlf)) ** 2
+                      + 1.489e-4 * math.cos(2.0 * dAlf) - 2.917e-5 * math.sin(3.0 * dAlf) - \
+                      + 3.438e-4 * math.cos(4.0 * dAlf)) ** 2
         return dVar
 
     def Julian(self, year, month, day):
         """
         Return julian day.
         """
-        if calendar.isleap(year): # Bissextil year, 366 days
+        if calendar.isleap(year):  # Bissextil year, 366 days
             lMonth = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366]
-        else: # Normal year, 365 days
+        else:  # Normal year, 365 days
             lMonth = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]
 
-        nJulian = lMonth[month-1] + day
+        nJulian = lMonth[month - 1] + day
         return nJulian
 
 
 if __name__ == "__main__":
-
     k = Sun()
-    print k.get_max_solar_flux(46.2, 2004, 01, 30)
-    print k.sunRiseSet(2002, 3, 22, 25.42, 62.15)
+    print(k.get_max_solar_flux(46.2, 2004, 1, 30))
+    print(k.sunRiseSet(2002, 3, 22, 25.42, 62.15))
